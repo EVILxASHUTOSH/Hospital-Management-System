@@ -16,13 +16,6 @@ function countOfPatients() {
         patients = JSON.parse(localStoragePatients);
     }
 
-    // Fetch patients from the JSON file
-    fetch('../resource/PatientList.json')
-        .then(response => response.json())
-        .then(jsonPatients => {
-            // Combine localStorage patients with JSON patients
-            patients = [...patients, ...jsonPatients];
-
             // Remove duplicates based on unique 'id'
             let uniquePatients = [];
             let patientIds = new Set();
@@ -40,10 +33,6 @@ function countOfPatients() {
 
             // Optional: Log merged patients
             console.log(uniquePatients);
-        })
-        .catch(error => {
-            console.error('Error fetching patients from JSON:', error);
-        });
 }
 
 //This function will auto-populate table with the data present in LocalStorage
@@ -57,14 +46,6 @@ function autoPopulateTableData() {
         patientsObject = JSON.parse(localStoragePatients);
     }
 
-    // Fetch patients from the JSON file
-    fetch('../resource/PatientList.json')
-        .then(response => response.json())
-        .then(jsonPatients => {
-            // Combine localStorage patients with JSON patients
-            patientsObject = [...patientsObject, ...jsonPatients];
-
-            // Remove duplicates based on unique 'id'
             let uniquePatients = [];
             let patientIds = new Set();
 
@@ -101,13 +82,24 @@ function autoPopulateTableData() {
                     `;
                 });
             }
-        })
-        .catch(error => {
-            console.error('Error fetching patients from JSON:', error);
-        });
-}
 
+        }
 
+        
+const diseaseToMedicines = {
+    "FLU": ["Paracetamol", "Ibuprofen", "Vitamin C"],
+    "BACKPAIN": ["Aspirin", "Cyclobenzaprine", "Naproxen"],
+    "HEADACHE": ["Amoxicillin", "Cetirizine", "Loratadine"],
+    "DEPRESSION": ["Sertraline", "Escitalopram", "Bupropion"],
+    "OSTEOPOROSIS": ["Alendronate", "Raloxifene", "Calcitonin"],
+    "CHRONICKIDNEYDISEASE": ["Losartan", "Calcium Carbonate", "Epoetin Alfa"],
+    "ARTHRITIS": ["Ibuprofen", "Methotrexate", "Hydroxychloroquine"],
+    "MIGRAINE": ["Sumatriptan", "Ergotamine", "Topiramate"],
+    "HYPERTENSION": ["Lisinopril", "Amlodipine", "Hydrochlorothiazide"],
+    "DIABETES": ["Metformin", "Glibenclamide", "Insulin"],
+    "ASTHMA": ["Albuterol", "Montelukast", "Fluticasone"]
+    // Add more mappings as needed
+};
 
 //This method adds a new doctor to LocalStorage
 function addNewPatientToList() {
@@ -127,15 +119,20 @@ function addNewPatientToList() {
     console.log(appointmentDate);
     let appointmentSlot = document.getElementById("appointment_slot").value;
     console.log(appointmentSlot);
-    let diseaseName = document.getElementById("disease_name").value;
+    let diseaseName = document.getElementById("disease_name").value.trim().toUpperCase();
     console.log(diseaseName);
+
+    let disease = {
+        name: diseaseName,
+        medicines: diseaseToMedicines[diseaseName] || []
+    };
 
     let obj = {
         "id": patientId,
         "name": patientName,
         "appointment_date": appointmentDate,
         "appointment_slot": appointmentSlot,
-        "disease_name": diseaseName
+        "disease": disease
     };
     if (patientsObject.some(patient => patient.id === obj.id)) {
         console.log("Patient already exist");        //This needs to be handled. Made for testing purpose.
@@ -155,12 +152,6 @@ function addNewPatientToList() {
 //This function displays the details of a patient on Modal.
 function viewPatientDetails(id) {
 
-    const medicineToTest = {
-        "FLU": ["Paracetamol", "Ibuprofen", "Vitamin C"],
-        "BACKPAIN": ["Aspirin", "Cyclobenzaprine", "Naproxen"],
-        "HEADACHE": ["Amoxicillin", "Cetirizine", "Loratadine"]
-    }
-
     let patientsObject = JSON.parse(localStorage.getItem("patientList"));
     let selectedPatient = patientsObject.find(patient => patient.id === id);
 
@@ -172,9 +163,10 @@ function viewPatientDetails(id) {
         console.log("Patient Disease Name:", selectedPatient.disease_name);
         let disease = selectedPatient.disease_name ? selectedPatient.disease_name.trim().toUpperCase() : 'N/A';
         console.log(disease);
-
-        const suggestedMedicine = medicineToTest[disease];
-        console.log(suggestedMedicine);
+        
+        // let suggestedMedicines = selectedPatient.disease?.medicines.join(", ") || 'N/A';
+        let suggestedMedicines = selectedPatient.disease?.medicines;
+        console.log(suggestedMedicines);
 
         // Constructing the modal body with patient details
         document.querySelector("#viewPatientModal .modal-body").innerHTML = `
@@ -187,22 +179,16 @@ function viewPatientDetails(id) {
                 <label for="patientNameInput">Name</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="appointmentDateInput" placeholder="" value="${selectedPatient.appointment_date || 'N/A'}" disabled>
-                <label for="appointmentDateInput">Appointment Date</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="appointmentSlotInput" placeholder="" value="${selectedPatient.appointment_slot || 'N/A'}" disabled>
-                <label for="appointmentSlotInput">Appointment Slot</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="diseaseNameInput" placeholder="" value="${selectedPatient.disease_name || 'N/A'}" disabled>
+                <input type="text" class="form-control" id="diseaseNameInput" placeholder="" value="${selectedPatient.disease.name || 'N/A'}" disabled>
                 <label for="diseaseNameInput">Disease Name</label>
             </div>
             <div class="form-floating mb-3">
-                <textarea class="form-control" id="recommendedTestsInput" disabled>${suggestedMedicine || 'N/A'}</textarea>
-                <label for="recommendedTestsInput">Suggested Tests</label>
+            
+        <textarea class="form-control" id="recommendedTestsInput" disabled>${suggestedMedicines}</textarea>
+                <label for="recommendedTestsInput">Suggested Medicine</label>
             </div>
         `;
+        // <textarea class="form-control" id="recommendedTestsInput" disabled>${(selectedPatient.disease?.medicines || []).join(', ') || 'N/A'}</textarea>
 
     }
     console.log(selectedPatient.name, selectedPatient.id, selectedPatient.appointment_date, selectedPatient.appointment_slot);

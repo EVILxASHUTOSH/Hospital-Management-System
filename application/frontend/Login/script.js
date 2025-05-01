@@ -1,22 +1,47 @@
- // Hardcoded JSON object with valid usernames and passwords
-  const users = [
-    { username: "Rishabh", password: "Rish@123" },
-    { username: "Harsh", password: "Coder101" }
+let loginData = [
+    {
+        "username":"admin",
+        "password":"admin@123"
+    },
+    {
+        "username":"doc01",
+        "password":"doc01@123"
+    },
+    {
+        "username":"doc02",
+        "password":"doc02@123"
+    },
+    {
+        "username":"user01",
+        "password":"user01@123"
+    },
+    {
+        "username":"user02",
+        "password":"user02@123"
+    },
+    {
+        "username":"user03",
+        "password":"user03@123"
+    },
+    {
+        "username":"user04",
+        "password":"user04@123"
+    }
 ];
 
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+sessionStorage.clear();
+
+function validate(event) {
     // Get the values of the username and password fields
     let username = document.getElementById('username').value.trim();
     let password = document.getElementById('password').value.trim();
 
     // Check if both fields are filled in
-    if (username === "" || password === "") {
+    if (!username || !password) {
         alert("Please fill in both fields.");
         event.preventDefault();
         return;
     }
-
-
     
     // Captcha validation
     const captchaInput = document.getElementById('captchaInput').value.trim();
@@ -28,29 +53,28 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return;
     }
 
-    
+    const user = loginData.find(user => user.username === username && user.password === password);
 
+    if(user){
 
-        // Check if the username and password are present in the JSON object
-        const user = users.find(user => user.username === username && user.password === password);
+        localStorage.setItem("user",user.username);
+        sessionStorage.setItem("isLoggedIn","true");
 
-        if (user) {
-            // Redirect to another page if credentials are valid
-            window.location.href = "demo.html";
-        } else {
-            // Show alert if credentials are invalid
-            alert("Invalid username or password");
+        if(user.username === "admin"){
+            window.location.href = "../Admin/AdminHomePage.html";
         }
-
-
-
-    // If all validations pass, redirect to demo.html
-    event.preventDefault(); // Prevent the default form submission behavior
-    //window.location.href = "demo.html"; // Redirect to demo.html
-
-    });
-
-
+        else if(user.username.startsWith("doc")){
+            window.location.href = "../Doctor/DoctorAppointmentView.html";
+        }
+        else if(user.username.startsWith("user")){
+            window.location.href = "../User/BookPatient.html"
+        }
+    }
+    else{
+        alert("Invalid username or password!");
+        return;
+    }
+}
 
 // Captcha generation
 function generateCaptcha() {

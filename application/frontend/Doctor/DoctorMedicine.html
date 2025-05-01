@@ -9,11 +9,59 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/styles.css">
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            alert('Unauthorized access. Please log in.');
+            window.location.href = '../Login/login.html';
+        }
+    </script>
 </head>
 
 <body>
     <!-- Static Modal: functionality(Add a new Patient)-->
-    
+    <div class="modal fade" id="addNewPatientModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add a Patient</h1>
+            </div>
+            <div class="modal-body">
+                <form action="#">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Patient ID" aria-label="Username" id="id">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Name" id="name">
+                    </div>
+                    <div class="input-group mb-3 my-3">
+                        <input type="text" class="form-control" placeholder="Appointment Date" aria-label="appointment_date" id="appointment_date">
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Appointment Slot" aria-label="appointment_slot" id="appointment_slot">
+                        
+                    </div>
+                    <select class="form-select" aria-label="Default select example" id="disease_name">
+                        <option selected>Select Disease</option>
+                        <option value="flu">FLU</option>
+                        <option value="backpain">BACKPAIN</option>
+                        <option value="headache">HEADACHE</option>
+                        <option value="asthma">ASTHMA</option>
+                        <option value="diabetes">DIABETES</option>
+                        <option value="hypertension">HYPERTENSION</option>
+                        <option value="migraine">MIGRAINE</option>
+                        <option value="chronickidneydisease">CHRONIC KIDNEY DISEASE</option>
+                        <option value="depression">DEPRESSION</option>
+                        <option value="osteoporosis">OSTEOPOROSIS</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addNewPatientToList()" data-bs-dismiss="modal">Save</button>
+                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+        </div>
 
 
     <!-- Dismissible Modal: functionality(View a Patient) -->
@@ -43,12 +91,7 @@
                 </div>
             </div>
             <ul class="sidebar-nav">
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="lni lni-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
+                
                 <li class="sidebar-item">
                     <a href="./DoctorAppointmentView.html" class="sidebar-link">
                         <i class="lni lni-first-aid"></i>
@@ -74,8 +117,8 @@
                     </a>
                 </li>
             </ul>
-            <div class="sidebar-footer">
-                <a href="#" class="sidebar-link">
+            <div class="sidebar-footer sticky-bottom">
+                <a href="../Login/login.html" class="sidebar-link">
                     <i class="lni lni-exit"></i>
                     <span>Logout</span>
                 </a>
@@ -120,30 +163,6 @@
                     </div>
                 </div>
             </main>
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row text-body-secondary">
-                        <div class="col-6 text-start ">
-                            <a class="text-body-secondary" href=" #">
-                                <strong>CodzSwod</strong>
-                            </a>
-                        </div>
-                        <div class="col-6 text-end text-body-secondary d-none d-md-block">
-                            <ul class="list-inline mb-0">
-                                <li class="list-inline-item">
-                                    <a class="text-body-secondary" href="#">Contact</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="text-body-secondary" href="#">About Us</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="text-body-secondary" href="#">Terms & Conditions</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 </body>
